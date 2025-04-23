@@ -5,33 +5,27 @@ import matplotlib.pyplot as plt
 # Title of the app
 st.title("🎓 CGPA Calculator: Unlock Your Academic Potential 🚀📈")
 
-# Custom CSS for a professional and clean interface
+# Custom CSS for background and sidebar
 st.markdown("""
     <style>
-        /* General Styles */
-        body, html {
-            background-color: #f0f8ff;
-            color: #333333;
-            font-family: 'Arial', sans-serif;
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        /* Main page background */
+        [data-testid="stAppViewContainer"] {
+            background-image: url("https://img.freepik.com/free-photo/abstract-blur-pastel-beautiful-peach-pink-color-sky-warm-tone-background-design-as-bannerslide-show-others_1258-100366.jpg?semt=ais_hybrid&w=740");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        .main {
-            background-color: #f0f8ff;
-            color: #333333;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
+        /* Sidebar background */
+        [data-testid="stSidebar"] {
+            background-image: url("https://i.pinimg.com/236x/ff/39/6f/ff396fca7f47cc3d2ca55ebc53e93bc7.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: white;
         }
 
-        /* Search bar boundary - Dark Red */
-        .stTextInput>div>div>input {
-            border: 2px solid #8B0000 !important;
-            border-radius: 5px;
-        }
-
-        /* Styling for the Streamlit button */
+        /* Button style */
         .stButton>button {
             background-color: #4CAF50;
             color: white;
@@ -46,69 +40,35 @@ st.markdown("""
             background-color: #45a049;
         }
 
-        /* Sidebar styling */
-        .sidebar {
-            background-color: #222222;
-            color: white;
-            padding: 20px;
+        /* Text input border style */
+        .stTextInput>div>div>input {
+            border: 2px solid #8B0000 !important;
+            border-radius: 5px;
         }
 
-        /* Sidebar links */
-        .sidebar-links a {
-            color: #4CAF50;  /* Green color like buttons */
-            font-size: 18px;
-            text-decoration: none;
-            margin-bottom: 15px;
-            display: block;
-        }
-        .sidebar-links a:hover {
-            color: #45a049;  /* Slightly darker green on hover */
-        }
-
-        /* Header and text styling */
-        .header {
-            font-size: 24px;
-            color: #4CAF50;
-        }
-        .subheader {
-            font-size: 20px;
-            color: #333333;
-        }
-
-        /* Footer section */
+        /* Footer style */
         .footer {
             font-size: 14px;
             color: #666666;
             text-align: center;
             padding: 20px 0;
         }
-
-        /* Ensure the main content spans full page */
-        .css-1l7u300 {
-            background-color: #f0f8ff;
-        }
     </style>
 """, unsafe_allow_html=True)
-
-# Introduction
-st.write("""
-This app helps you calculate your CGPA based on your semester GPAs. 
-You can also visualize your GPA trends and reset inputs for a fresh calculation.
-""")
 
 # Sidebar content
 st.sidebar.markdown("## 👨‍💻 Connect with Me")
 st.sidebar.markdown("""
-<div class="sidebar-links">
+<div>
     <a href="https://github.com/marianadeem755" target="_blank">
         <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" width="30px"> GitHub
-    </a>
+    </a><br><br>
     <a href="https://www.kaggle.com/marianadeem755" target="_blank">
         <img src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/189_Kaggle_logo_logos-512.png" width="30px"> Kaggle
-    </a>
+    </a><br><br>
     <a href="mailto:marianadeem755@gmail.com">
         <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" width="30px"> Email
-    </a>
+    </a><br><br>
     <a href="https://huggingface.co/maria355" target="_blank">
         <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" width="30px"> Hugging Face
     </a>
@@ -127,11 +87,10 @@ for i in range(1, num_semesters + 1):
 
 # Calculate CGPA
 if st.button("Calculate CGPA"):
-    if len(gpa_list) > 0:
+    if gpa_list:
         cgpa = sum(gpa_list) / len(gpa_list)
         st.success(f"Your CGPA is: {cgpa:.2f}")
 
-        # GPA Summary
         highest_gpa = max(gpa_list)
         lowest_gpa = min(gpa_list)
         average_gpa = sum(gpa_list) / len(gpa_list)
@@ -143,7 +102,6 @@ if st.button("Calculate CGPA"):
         st.write(f"Lowest GPA: {lowest_gpa:.2f}")
         st.write(f"Average GPA: {average_gpa:.2f}")
 
-        # GPA Trend Visualization
         st.subheader("GPA Trend")
         fig, ax = plt.subplots()
         ax.plot(range(1, len(gpa_list) + 1), gpa_list, marker='o', linestyle='-', color='b')
@@ -164,7 +122,9 @@ if st.button("Calculate CGPA"):
             "Value": [cgpa, highest_gpa, lowest_gpa, average_gpa]
         })
 
-        combined_df = pd.concat([df, pd.DataFrame([["", ""]], columns=["Semester", "GPA"]), summary_df.rename(columns={"Metric": "Semester", "Value": "GPA"})], ignore_index=True)
+        combined_df = pd.concat([df, pd.DataFrame([["", ""]], columns=["Semester", "GPA"]),
+                                 summary_df.rename(columns={"Metric": "Semester", "Value": "GPA"})],
+                                ignore_index=True)
 
         csv = combined_df.to_csv(index=False).encode('utf-8')
         st.download_button(
