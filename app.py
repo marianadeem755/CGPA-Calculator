@@ -22,7 +22,7 @@ st.markdown("""
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            color: white;
+            color: black;
         }
 
         /* Button style */
